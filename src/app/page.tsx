@@ -15,7 +15,7 @@ import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Context } from '@/context/Gemini';
-import { Search } from 'lucide-react';
+import { Gamepad2Icon, Medal, Printer, Search, Ship } from 'lucide-react';
 import { useContext } from 'react';
 
 import { useState } from 'react';
@@ -30,14 +30,28 @@ export default function Home() {
     loading,
     resultData,
     onSent,
+    setShowResult,
   } = useContext(Context);
 
   const [activeTab, setActiveTab] = useState<string>('init');
 
   const handleSend = async (prompt: string) => {
-    setActiveTab(prompt); // Define a aba ativa como o prompt atual
-    await onSent(prompt); // Envia o prompt
+    setActiveTab(prompt);
+    await onSent(prompt);
   };
+
+  const cardData = [
+    { icon: Ship, description: 'Como foi o descobrimento do Brasil?' },
+    { icon: Gamepad2Icon, description: 'Qual foi o principal jogo da Steam?' },
+    {
+      icon: Printer,
+      description: 'Monte um relatório com informações básicas do IBGE.',
+    },
+    {
+      icon: Medal,
+      description: 'Qual é o maior time do Rio Grande do Sul?',
+    },
+  ];
 
   return (
     <div className="flex flex-col min-h-screen items-center justify-center">
@@ -56,6 +70,9 @@ export default function Home() {
               <TabsTrigger
                 value="init"
                 className="overflow-hidden text-ellipsis whitespace-nowrap"
+                onClick={() => {
+                  setShowResult(false);
+                }}
               >
                 <span className="block truncate">Novas Questões?</span>
               </TabsTrigger>
@@ -76,23 +93,39 @@ export default function Home() {
         </Card>
         <Card className="w-[700px] h-[800px] grid grid-rows-[min-content_1fr_min-content] overflow-auto scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-200">
           <CardHeader>
-            <CardTitle className="text-primary">ChatIA</CardTitle>
+            <CardTitle className="text-primary">QuestionsAI</CardTitle>
             <CardDescription className="text-sm">
-              Sou a ChatIA, projetada para resolver problemas, encontrar
+              Sou a QuestionsAI, projetada para resolver problemas, encontrar
               soluções e entregar resultados.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
             {loading ? (
-              <div className="flex items-center space-x-4">
-                <Skeleton className="h-12 w-12 rounded-full bg-primary/50 text-primary " />
-                <div className="space-y-2">
-                  <Skeleton className="h-4 w-[250px] bg-primary/50 text-primary" />
-                  <Skeleton className="h-4 w-[200px] bg-primary/50 text-primary" />
+              <div className="items-center space-x-4 grid grid-rows-[min-content_1fr_min-content]">
+                <Skeleton className="h-12 w-12 rounded-full bg-primary/50 text-primary mx-3" />
+                <div className="space-y-2 mt-2">
+                  <Skeleton className="h-4 w-full bg-primary/50 text-primary" />
+                  <Skeleton className="h-4 w-10/12 bg-primary/50 text-primary" />
+                  <Skeleton className="h-4 w-11/12 bg-primary/50 text-primary" />
                 </div>
               </div>
             ) : !showResult ? (
-              <p></p>
+              <div className="grid grid-cols-2 gap-4">
+                {cardData.map(({ icon: Icon, description }, index) => (
+                  <Card
+                    key={index}
+                    className="w-full h-full transition-transform duration-300 hover:scale-105 hover:cursor-pointer"
+                    onClick={() => handleSend(description)}
+                  >
+                    <CardHeader>
+                      <Icon className="text-primary align-middle w-full" />
+                      <CardDescription className="text-sm">
+                        {description}
+                      </CardDescription>
+                    </CardHeader>
+                  </Card>
+                ))}
+              </div>
             ) : (
               <>
                 <div className="flex gap-3 text-slate-600 text-sm">
@@ -116,7 +149,7 @@ export default function Home() {
 
                   <p className="leading-normal">
                     <span className="block font-bold text-slate-700 dark:text-slate-400 ">
-                      ChatIA:
+                      QuestionsAI:
                     </span>
                     <p
                       dangerouslySetInnerHTML={{ __html: resultData }}
