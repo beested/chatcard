@@ -1,4 +1,3 @@
-import ContextProvider from '@/context/Gemini';
 import ThemeDataProvider from '@/context/theme-data-provider';
 import type { Metadata } from 'next';
 import { ThemeProvider as NextThemesProvider } from 'next-themes';
@@ -26,9 +25,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <ContextProvider>
-            <ThemeDataProvider>{children}</ThemeDataProvider>
-          </ContextProvider>
+          <ThemeDataProvider>{children}</ThemeDataProvider>
         </NextThemesProvider>
       </body>
     </html>
